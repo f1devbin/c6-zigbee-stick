@@ -7,6 +7,7 @@ LOGGER = logging.getLogger(__package__)
 
 # ESP32-C6 built-in USB-Serial/JTAG. Fixed in silicon, so every C6 board looks like this;
 # the ZBOSS probe tells our coordinator apart from other ESP32 firmware.
+FLASHER_URL = "https://f1devbin.github.io/c6-zigbee-stick/"
 USB_VID = "303A"
 USB_PID = "1001"
 

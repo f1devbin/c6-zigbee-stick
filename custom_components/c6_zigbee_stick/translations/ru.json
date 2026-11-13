@@ -13,7 +13,7 @@
     "abort": {
       "already_configured": "Этот стик уже настроен.",
       "no_devices_found": "ESP32-C6 по USB не подключена.",
-      "not_zboss": "ESP32-C6 не отвечает как Zigbee-координатор. Сначала прошейте её: https://f1devbin.github.io/c6-zigbee-stick/",
+      "not_zboss": "ESP32-C6 не отвечает как Zigbee-координатор. Сначала прошейте её: {url}",
       "port_busy": "Порт занят другой программой.",
       "z2m_other_adapter": "Zigbee2MQTT уже работает с другим адаптером, поэтому его не трогали.",
       "z2m_setup_failed": "Не удалось настроить Zigbee2MQTT: {error}"

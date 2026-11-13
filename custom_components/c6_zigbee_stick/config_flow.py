@@ -15,7 +15,17 @@ from homeassistant.helpers.hassio import is_hassio
 from homeassistant.helpers.service_info.usb import UsbServiceInfo
 
 from . import zboss
-from .const import ADAPTER, CONF_DEVICE, CONF_FIRMWARE, CONF_SERIAL, DOMAIN, LOGGER, USB_PID, USB_VID
+from .const import (
+    ADAPTER,
+    CONF_DEVICE,
+    CONF_FIRMWARE,
+    CONF_SERIAL,
+    DOMAIN,
+    FLASHER_URL,
+    LOGGER,
+    USB_PID,
+    USB_VID,
+)
 from .z2m import async_current_serial, async_setup_z2m
 
 TITLE = "C6 Zigbee Stick"
@@ -77,7 +87,7 @@ class C6ZigbeeStickConfigFlow(ConfigFlow, domain=DOMAIN):
 
         if reason := await self._async_check(device, discovery_info.serial_number):
             # Silent for USB discovery: other ESP32 boards share this USB id.
-            return self.async_abort(reason=reason)
+            return self.async_abort(reason=reason, description_placeholders={"url": FLASHER_URL})
 
         self.context["title_placeholders"] = {"name": TITLE}
         return await self.async_step_confirm()
@@ -104,7 +114,7 @@ class C6ZigbeeStickConfigFlow(ConfigFlow, domain=DOMAIN):
                 continue
             await self.async_set_unique_id(serial)
             return await self.async_step_confirm()
-        return self.async_abort(reason=last_reason)
+        return self.async_abort(reason=last_reason, description_placeholders={"url": FLASHER_URL})
 
     async def async_step_confirm(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
         """Show what was found and what will be done."""
