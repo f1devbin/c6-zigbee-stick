@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>C6 Zigbee Stick: прошивка ESP32-C6 в Zigbee-координатор</title>
+<meta name="description" content="Прошейте ESP32-C6 в Zigbee-координатор прямо из браузера и подключите к Home Assistant без ручной настройки.">
+<link rel="alternate" hreflang="ru" href="https://f1devbin.github.io/c6-zigbee-stick/">
+<link rel="alternate" hreflang="en" href="https://f1devbin.github.io/c6-zigbee-stick/en/">
+<link rel="icon" href="/favicon.ico">
+<script type="module" src="https://unpkg.com/esp-web-tools@10.4.0/dist/web/install-button.js?module"></script>
+<style>
+:root{--bg:#0f1b2d;--text:#fff;--text2:#dce6f3;--link:#8fd0ff;--btn:#8fd0ff;--btn-text:#0b1626;--rule:#33496b;color-scheme:dark}
+@media (prefers-color-scheme:light){:root{--bg:#f7f9fc;--text:#0a1424;--text2:#1d2d43;--link:#084a8e;--btn:#084a8e;--btn-text:#fff;--rule:#bccadb;color-scheme:light}}
+body{margin:0;background:var(--bg);color:var(--text2);font:400 18px/1.65 "IBM Plex Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:44rem;margin:0 auto;padding:2.5rem 1.25rem 4rem}
+h1,h2{color:var(--text);line-height:1.2} h1{font-size:2.4rem;margin:0 0 1rem} h2{font-size:1.35rem;margin:2.5rem 0 .5rem}
+.lead{font-size:1.2rem;color:var(--text)} a{color:var(--link)} code{font-size:.9em;word-break:break-all}
+.lang{text-align:right;margin:0 0 1rem} .note{font-size:.95rem}
+esp-web-install-button{display:block;margin:1.25rem 0}
+.btn{font:600 1.05rem/1 inherit;padding:.9rem 1.4rem;border-radius:.5rem;border:0;background:var(--btn);color:var(--btn-text);cursor:pointer}
+footer{border-top:1px solid var(--rule);margin-top:3rem;padding-top:1rem;font-size:.95rem}
+</style>
+</head>
+<body>
+<main>
+<p class="lang"><a href="en/">English</a></p>
+<h1>C6 Zigbee Stick</h1>
+<p class="lead">Превращает обычную плату ESP32-C6 в Zigbee-координатор для Home Assistant. Прошивка ставится из браузера, а интеграция сама находит стик и настраивает Zigbee2MQTT.</p>
+<h2>1. Прошейте плату</h2>
+<p>Подключите ESP32-C6 к компьютеру USB-кабелем с передачей данных (к разъёму USB, а не UART) и нажмите кнопку. Нужен Chrome или Edge на компьютере.</p>
+<esp-web-install-button manifest="manifest.json">
+<button slot="activate" class="btn">Установить прошивку</button>
+<span slot="unsupported">Ваш браузер не умеет работать с USB-портами. Откройте страницу в Chrome или Edge на компьютере.</span>
+<span slot="not-allowed">Ваш браузер не умеет работать с USB-портами. Откройте страницу в Chrome или Edge на компьютере.</span>
+</esp-web-install-button>
+<p class="note">Прошивка: esp-coordinator 1.5.80 (ZBOSS). Память платы будет полностью стёрта.</p>
+<h2>2. Поставьте интеграцию в Home Assistant</h2>
+<p>Один раз через HACS: «HACS → ⋮ → Пользовательские репозитории», адрес <code>https://github.com/f1devbin/c6-zigbee-stick</code>, тип «Интеграция». Установите «C6 Zigbee Stick» и перезапустите Home Assistant.</p>
+<h2>3. Вставьте стик</h2>
+<p>Подключите плату к компьютеру с Home Assistant. Появится уведомление «Найдено: C6 Zigbee Stick». Нажмите «Настроить»: интеграция сама установит и запустит Zigbee2MQTT. После этого добавляйте Zigbee-устройства в Zigbee2MQTT кнопкой «Разрешить подключение».</p>
+<footer><p>Подробности, ограничения и исходный код: <a href="https://github.com/f1devbin/c6-zigbee-stick">github.com/f1devbin/c6-zigbee-stick</a></p></footer>
+</main>
+</body>
+</html>

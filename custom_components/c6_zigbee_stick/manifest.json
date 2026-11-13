@@ -1,0 +1,15 @@
+{
+  "domain": "c6_zigbee_stick",
+  "name": "C6 Zigbee Stick",
+  "after_dependencies": ["hassio", "mqtt"],
+  "codeowners": ["@f1devbin"],
+  "config_flow": true,
+  "dependencies": ["usb"],
+  "documentation": "https://github.com/f1devbin/c6-zigbee-stick",
+  "integration_type": "device",
+  "iot_class": "local_push",
+  "issue_tracker": "https://github.com/f1devbin/c6-zigbee-stick/issues",
+  "requirements": [],
+  "usb": [{ "vid": "303A", "pid": "1001" }],
+  "version": "0.1.0"
+}

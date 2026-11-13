@@ -1,0 +1,11 @@
+{
+  "name": "C6 Zigbee Stick (esp-coordinator)",
+  "version": "1.5.80",
+  "new_install_prompt_erase": true,
+  "builds": [
+    {
+      "chipFamily": "ESP32-C6",
+      "parts": [{ "path": "firmware/esp-coordinator-esp32c6-v1.5.80-factory.bin", "offset": 0 }]
+    }
+  ]
+}

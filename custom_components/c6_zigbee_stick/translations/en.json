@@ -1,0 +1,22 @@
+{
+  "config": {
+    "flow_title": "{name}",
+    "step": {
+      "confirm": {
+        "title": "C6 Zigbee Stick found",
+        "description": "An ESP32-C6 Zigbee coordinator is connected.\n\nPort: `{device}`\nFirmware: {firmware}\n\nSubmit to install and start Zigbee2MQTT for it (and the Mosquitto broker, if Home Assistant has no MQTT broker yet). This takes a minute or two."
+      }
+    },
+    "progress": {
+      "setup_z2m": "Installing and starting Zigbee2MQTT. This can take a few minutes."
+    },
+    "abort": {
+      "already_configured": "This stick is already set up.",
+      "no_devices_found": "No ESP32-C6 is connected over USB.",
+      "not_zboss": "The ESP32-C6 does not answer as a Zigbee coordinator. Flash the coordinator firmware first: https://f1devbin.github.io/c6-zigbee-stick/",
+      "port_busy": "The port is in use by another program.",
+      "z2m_other_adapter": "Zigbee2MQTT already works with another adapter, so it was left as it is.",
+      "z2m_setup_failed": "Zigbee2MQTT could not be set up: {error}"
+    }
+  }
+}
