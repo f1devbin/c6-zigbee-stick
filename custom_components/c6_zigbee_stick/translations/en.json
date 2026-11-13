@@ -13,7 +13,7 @@
     "abort": {
       "already_configured": "This stick is already set up.",
       "no_devices_found": "No ESP32-C6 is connected over USB.",
-      "not_zboss": "The ESP32-C6 does not answer as a Zigbee coordinator. Flash the coordinator firmware first: https://f1devbin.github.io/c6-zigbee-stick/",
+      "not_zboss": "The ESP32-C6 does not answer as a Zigbee coordinator. Flash the coordinator firmware first: {url}",
       "port_busy": "The port is in use by another program.",
       "z2m_other_adapter": "Zigbee2MQTT already works with another adapter, so it was left as it is.",
       "z2m_setup_failed": "Zigbee2MQTT could not be set up: {error}"
