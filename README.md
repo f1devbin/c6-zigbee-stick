@@ -1,55 +1,62 @@
-# C6 Zigbee Stick
+# C6 Zigbee Stick: ESP32-C6 Zigbee coordinator for Home Assistant
 
-[🇬🇧 English](README.en.md)
+[![HACS Custom](https://img.shields.io/badge/HACS-Custom-41BDF5.svg)](https://hacs.xyz/docs/faq/custom_repositories/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Validate](https://github.com/f1devbin/c6-zigbee-stick/actions/workflows/validate.yml/badge.svg)](https://github.com/f1devbin/c6-zigbee-stick/actions/workflows/validate.yml)
 
-Zigbee-координатор для Home Assistant из обычной платы **ESP32-C6** за 5 минут, без терминала и ручной правки конфигов.
+[🇷🇺 Русский](README.ru.md)
 
-1. **Прошить** плату из браузера: <https://f1devbin.github.io/c6-zigbee-stick/>
-2. **Поставить** интеграцию «C6 Zigbee Stick» через HACS (один раз).
-3. **Вставить** стик в компьютер с Home Assistant и нажать «Настроить» в уведомлении «Найдено: C6 Zigbee Stick».
+Turn an ordinary **ESP32-C6** board into a plug-and-play **Zigbee coordinator for Home Assistant** in five minutes: no terminal, no YAML, no manual Zigbee2MQTT setup.
 
-Интеграция сама установит и запустит Zigbee2MQTT (и брокер Mosquitto, если MQTT ещё нет), пропишет порт и тип адаптера и будет поднимать Zigbee2MQTT заново, если стик переподключить.
+1. **Flash** the board from your browser: **<https://f1devbin.github.io/c6-zigbee-stick/>**
+2. **Install** the “C6 Zigbee Stick” integration through HACS (once):
 
-## Зачем нужна интеграция
+   [![Open your Home Assistant instance and open this repository in HACS.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=f1devbin&repository=c6-zigbee-stick&category=integration)
+3. **Plug** the stick into the Home Assistant machine and press “Add” on the “Discovered: C6 Zigbee Stick” card.
 
-Заводские стики (Sonoff, SMLIGHT, ConBee) Home Assistant узнаёт по названию в USB-описании. У ESP32-C6 USB встроен в чип, и его описание прошивкой не меняется: любая C6 выглядит как «Espressif USB JTAG/serial debug unit» (`303a:1001`), будь в ней ESPHome или что-то ещё. Поэтому интеграция откликается на любую C6, но сначала «спрашивает» её по протоколу ZBOSS (команда версии модуля). Не ответила как координатор — интеграция молча пропускает плату.
+The integration installs and starts Zigbee2MQTT (and the Mosquitto broker if there is no MQTT yet), sets the port and adapter type, and restarts Zigbee2MQTT when the stick is plugged back in.
 
-## Что понадобится
+## Why an integration is needed
 
-- Плата ESP32-C6 с разъёмом USB (тот, что ведёт прямо в чип; на платах с двумя разъёмами он подписан USB, а не UART/COM). Подойдут ESP32-C6-DevKitC-1, Seeed XIAO ESP32-C6 и аналоги.
-- Home Assistant OS или Supervised 2026.11 и новее. На Container/Core интеграция найдёт стик и покажет готовый `configuration.yaml` для Zigbee2MQTT, но ставить Zigbee2MQTT придётся самому.
-- Chrome или Edge на компьютере для прошивки.
+Home Assistant recognises retail sticks (Sonoff, SMLIGHT, ConBee) by the name in their USB descriptor. The ESP32-C6 has USB built into the chip and firmware cannot change that descriptor: every C6 shows up as “Espressif USB JTAG/serial debug unit” (`303a:1001`), whether it runs ESPHome or anything else. So the integration reacts to any C6, but first asks it for its module version over the ZBOSS protocol. If the board does not answer as a coordinator, it is silently skipped.
 
-## Как это устроено
+## What you need
 
-| Часть | Где | Что делает |
+- An ESP32-C6 board with a USB connector wired to the chip (on two-connector boards it is labelled USB, not UART/COM): ESP32-C6-DevKitC-1, Seeed XIAO ESP32-C6 and similar.
+- Home Assistant OS or Supervised 2026.11 or later. On Container/Core the integration still finds the stick and shows a ready `configuration.yaml` for Zigbee2MQTT, but you install Zigbee2MQTT yourself.
+- Chrome or Edge on a computer for flashing.
+
+## How it works
+
+| Part | Where | What it does |
 |---|---|---|
-| Прошивка | [esp-coordinator](https://github.com/tostmann/esp-coordinator) v1.5.80, без изменений, в `docs/firmware` | Zigbee-стек ZBOSS от Espressif, протокол NCP по USB |
-| Прошивальщик | `docs/` → GitHub Pages, [ESP Web Tools](https://esphome.github.io/esp-web-tools/) | Прошивка из браузера одной кнопкой |
-| Интеграция | `custom_components/c6_zigbee_stick` | Находит стик по USB, проверяет протокол, настраивает и перезапускает Zigbee2MQTT |
-| Zigbee2MQTT | официальное приложение | Работает с адаптером `zboss`, публикует устройства в Home Assistant |
+| Firmware | [esp-coordinator](https://github.com/tostmann/esp-coordinator) v1.5.80, unmodified, in `docs/firmware` | Espressif's ZBOSS Zigbee stack, NCP protocol over USB |
+| Flasher | `docs/` → GitHub Pages, [ESP Web Tools](https://esphome.github.io/esp-web-tools/) | One-button flashing from the browser |
+| Integration | `custom_components/c6_zigbee_stick` | Finds the stick on USB, checks the protocol, configures and restarts Zigbee2MQTT, shows the firmware version |
+| Zigbee2MQTT | official app | Runs the `zboss` adapter and exposes devices to Home Assistant |
 
-При настройке интеграция:
+During setup the integration:
 
-- добавляет репозиторий приложений Zigbee2MQTT, если его нет;
-- ставит и запускает Mosquitto, если в Home Assistant нет MQTT;
-- ставит Zigbee2MQTT, прописывает в настройках приложения `serial.port` (путь `/dev/serial/by-id/…`) и `serial.adapter: zboss`, включает автозапуск и сторожа;
-- создаёт `zigbee2mqtt/configuration.yaml`, только если его ещё нет (канал 20, мощность 20 дБм, ключи сети генерируются). Существующий файл не трогает.
+- adds the Zigbee2MQTT app repository if it is missing;
+- installs and starts Mosquitto if Home Assistant has no MQTT;
+- installs Zigbee2MQTT, sets the app options `serial.port` (a `/dev/serial/by-id/…` path) and `serial.adapter: zboss`, turns on start at boot and the watchdog;
+- creates `zigbee2mqtt/configuration.yaml` only if there is none yet (channel 20, 20 dBm, generated network keys). An existing file is never touched.
 
-Если Zigbee2MQTT уже работает с другим адаптером, интеграция его не перехватывает и сообщает об этом.
+If Zigbee2MQTT already runs with another adapter, the integration leaves it alone and says so.
 
-## Ограничения
+## Limitations
 
-- Поддержка адаптера `zboss` в Zigbee2MQTT пока **экспериментальная**: нельзя сменить канал без повторного сопряжения устройств, нет резервной копии сети средствами Zigbee2MQTT, нет install-кодов и touchlink. Подробно — в [документации Zigbee2MQTT](https://www.zigbee2mqtt.io/guide/adapters/zboss.html).
-- Встроенный в Home Assistant ZHA этот протокол не поддерживает, поэтому используется Zigbee2MQTT.
-- Если Home Assistant работает в виртуальной машине, USB-устройство нужно пробросить в неё с автоматическим переподключением (в Proxmox — «Use USB Vendor/Device ID»; в libvirt — правило udev).
+- Zigbee2MQTT's `zboss` adapter support is still **experimental**: changing the channel means re-pairing devices, and there are no Zigbee2MQTT network backups, install codes or touchlink. See the [Zigbee2MQTT docs](https://www.zigbee2mqtt.io/guide/adapters/zboss.html).
+- Home Assistant's built-in ZHA does not support this protocol, hence Zigbee2MQTT.
+- If Home Assistant runs in a virtual machine, pass the USB device through with automatic re-attach (Proxmox: “Use USB Vendor/Device ID”; libvirt: a udev rule).
 
-## Разработка
+## Development
 
 ```bash
-python -m pytest -q tests      # проверка протокола ZBOSS, Home Assistant не нужен
+python -m pytest -q tests      # ZBOSS protocol tests, no Home Assistant needed
+python tools/build_site.py     # rebuild the flasher pages (docs/) after changing their text
 ```
 
-## Лицензия
+## License
 
-MIT. Прошивка esp-coordinator — MIT (andryblack, tostmann), см. `docs/firmware/LICENSE-esp-coordinator.txt`; в её составе ESP-IDF и Zigbee SDK от Espressif под их лицензиями.
+MIT. The esp-coordinator firmware is MIT (andryblack, tostmann), see `docs/firmware/LICENSE-esp-coordinator.txt`; it contains Espressif's ESP-IDF and Zigbee SDK under their licenses.

@@ -1,45 +1,74 @@
 <!doctype html>
-<html lang="ru">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>C6 Zigbee Stick: прошивка ESP32-C6 в Zigbee-координатор</title>
-<meta name="description" content="Прошейте ESP32-C6 в Zigbee-координатор прямо из браузера и подключите к Home Assistant без ручной настройки.">
-<link rel="alternate" hreflang="ru" href="https://f1devbin.github.io/c6-zigbee-stick/">
-<link rel="alternate" hreflang="en" href="https://f1devbin.github.io/c6-zigbee-stick/en/">
-<link rel="icon" href="/favicon.ico">
+<title>ESP32-C6 Zigbee Coordinator for Home Assistant: Web Flasher</title>
+<meta name="description" content="Turn an ESP32-C6 into a Zigbee coordinator for Home Assistant: flash it from the browser, plug it in, and the integration sets up Zigbee2MQTT for you. Free and open source.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://f1devbin.github.io/c6-zigbee-stick/">
+<link rel="alternate" hreflang="en" href="https://f1devbin.github.io/c6-zigbee-stick/">
+<link rel="alternate" hreflang="ru" href="https://f1devbin.github.io/c6-zigbee-stick/ru/">
+<link rel="alternate" hreflang="x-default" href="https://f1devbin.github.io/c6-zigbee-stick/">
+<link rel="icon" type="image/png" href="icon.png">
+<link rel="apple-touch-icon" href="icon.png">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="C6 Zigbee Stick">
+<meta property="og:title" content="ESP32-C6 Zigbee Coordinator for Home Assistant: Web Flasher">
+<meta property="og:description" content="Turn an ESP32-C6 into a Zigbee coordinator for Home Assistant: flash it from the browser, plug it in, and the integration sets up Zigbee2MQTT for you. Free and open source.">
+<meta property="og:url" content="https://f1devbin.github.io/c6-zigbee-stick/">
+<meta property="og:image" content="https://f1devbin.github.io/c6-zigbee-stick/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">[{"@context": "https://schema.org", "@type": "SoftwareApplication", "name": "C6 Zigbee Stick", "description": "Turn an ESP32-C6 into a Zigbee coordinator for Home Assistant: flash it from the browser, plug it in, and the integration sets up Zigbee2MQTT for you. Free and open source.", "url": "https://f1devbin.github.io/c6-zigbee-stick/", "inLanguage": "en", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Home Assistant OS", "softwareVersion": "1.5.80", "downloadUrl": "https://f1devbin.github.io/c6-zigbee-stick/firmware/esp-coordinator-esp32c6-v1.5.80-factory.bin", "codeRepository": "https://github.com/f1devbin/c6-zigbee-stick", "license": "https://opensource.org/licenses/MIT", "isAccessibleForFree": true, "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "author": {"@type": "Person", "name": "f1devbin", "url": "https://f1devbin.github.io/"}, "image": "https://f1devbin.github.io/c6-zigbee-stick/og.png", "keywords": "ESP32-C6, Zigbee coordinator, Home Assistant, Zigbee2MQTT, ZBOSS, HACS, web flasher"}, {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Can an ESP32-C6 be a Zigbee coordinator?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. The ESP32-C6 has an IEEE 802.15.4 radio. With Espressif's ZBOSS stack in network co-processor mode it works as a coordinator, and Zigbee2MQTT talks to it with its zboss adapter."}}, {"@type": "Question", "name": "Does it work with ZHA?", "acceptedAnswer": {"@type": "Answer", "text": "Not yet: Home Assistant's built-in ZHA has no ZBOSS support, so the integration uses Zigbee2MQTT."}}, {"@type": "Question", "name": "Why does Home Assistant need an integration for it?", "acceptedAnswer": {"@type": "Answer", "text": "Retail sticks are recognised by the name in their USB descriptor. Every ESP32-C6 reports the same fixed descriptor (303a:1001, “USB JTAG/serial debug unit”), so the integration asks the board over the ZBOSS protocol whether it really is a coordinator before offering to set it up."}}, {"@type": "Question", "name": "What are the limitations?", "acceptedAnswer": {"@type": "Answer", "text": "Zigbee2MQTT's zboss adapter is marked experimental: changing the channel means re-pairing devices, and network backups, install codes and touchlink are not supported yet."}}]}]</script>
 <script type="module" src="https://unpkg.com/esp-web-tools@10.4.0/dist/web/install-button.js?module"></script>
 <style>
 :root{--bg:#0f1b2d;--text:#fff;--text2:#dce6f3;--link:#8fd0ff;--btn:#8fd0ff;--btn-text:#0b1626;--rule:#33496b;color-scheme:dark}
 @media (prefers-color-scheme:light){:root{--bg:#f7f9fc;--text:#0a1424;--text2:#1d2d43;--link:#084a8e;--btn:#084a8e;--btn-text:#fff;--rule:#bccadb;color-scheme:light}}
 body{margin:0;background:var(--bg);color:var(--text2);font:400 18px/1.65 "IBM Plex Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
 main{max-width:44rem;margin:0 auto;padding:2.5rem 1.25rem 4rem}
-h1,h2{color:var(--text);line-height:1.2} h1{font-size:2.4rem;margin:0 0 1rem} h2{font-size:1.35rem;margin:2.5rem 0 .5rem}
+h1,h2,h3{color:var(--text);line-height:1.2} h1{font-size:2.2rem;margin:0 0 1rem} h2{font-size:1.35rem;margin:2.5rem 0 .5rem} h3{font-size:1.1rem;margin:1.5rem 0 .25rem}
 .lead{font-size:1.2rem;color:var(--text)} a{color:var(--link)} code{font-size:.9em;word-break:break-all}
 .lang{text-align:right;margin:0 0 1rem} .note{font-size:.95rem}
+.logo{width:72px;height:72px;display:block;margin:0 0 1rem}
 esp-web-install-button{display:block;margin:1.25rem 0}
-.btn{font:600 1.05rem/1 inherit;padding:.9rem 1.4rem;border-radius:.5rem;border:0;background:var(--btn);color:var(--btn-text);cursor:pointer}
+.btn{display:inline-block;font-family:inherit;font-weight:600;font-size:1.05rem;line-height:1.2;padding:.9rem 1.4rem;border-radius:.5rem;border:0;background:var(--btn);color:var(--btn-text);cursor:pointer;text-decoration:none}
 footer{border-top:1px solid var(--rule);margin-top:3rem;padding-top:1rem;font-size:.95rem}
 </style>
 </head>
 <body>
 <main>
-<p class="lang"><a href="en/">English</a></p>
-<h1>C6 Zigbee Stick</h1>
-<p class="lead">Превращает обычную плату ESP32-C6 в Zigbee-координатор для Home Assistant. Прошивка ставится из браузера, а интеграция сама находит стик и настраивает Zigbee2MQTT.</p>
-<h2>1. Прошейте плату</h2>
-<p>Подключите ESP32-C6 к компьютеру USB-кабелем с передачей данных (к разъёму USB, а не UART) и нажмите кнопку. Нужен Chrome или Edge на компьютере.</p>
+<p class="lang"><a href="https://f1devbin.github.io/c6-zigbee-stick/ru/" hreflang="ru">Русский</a></p>
+<img class="logo" src="icon.png" alt="" width="72" height="72">
+<h1>ESP32-C6 Zigbee coordinator for Home Assistant</h1>
+<p class="lead">C6 Zigbee Stick turns an ordinary ESP32-C6 board into a Zigbee coordinator. Flash the firmware from this page, plug the board into Home Assistant, and the integration finds it and sets up Zigbee2MQTT. No terminal, no YAML.</p>
+<h2>1. Flash the ESP32-C6 from your browser</h2>
+<p>Connect the board to your computer with a data USB cable (to the USB connector, not UART) and press the button. Works in Chrome and Edge on a computer.</p>
 <esp-web-install-button manifest="manifest.json">
-<button slot="activate" class="btn">Установить прошивку</button>
-<span slot="unsupported">Ваш браузер не умеет работать с USB-портами. Откройте страницу в Chrome или Edge на компьютере.</span>
-<span slot="not-allowed">Ваш браузер не умеет работать с USB-портами. Откройте страницу в Chrome или Edge на компьютере.</span>
+<button slot="activate" class="btn">Install firmware</button>
+<span slot="unsupported">Your browser cannot talk to USB ports. Open this page in Chrome or Edge on a computer.</span>
+<span slot="not-allowed">Your browser cannot talk to USB ports. Open this page in Chrome or Edge on a computer.</span>
 </esp-web-install-button>
-<p class="note">Прошивка: esp-coordinator 1.5.80 (ZBOSS). Память платы будет полностью стёрта.</p>
-<h2>2. Поставьте интеграцию в Home Assistant</h2>
-<p>Один раз через HACS: «HACS → ⋮ → Пользовательские репозитории», адрес <code>https://github.com/f1devbin/c6-zigbee-stick</code>, тип «Интеграция». Установите «C6 Zigbee Stick» и перезапустите Home Assistant.</p>
-<h2>3. Вставьте стик</h2>
-<p>Подключите плату к компьютеру с Home Assistant. Появится уведомление «Найдено: C6 Zigbee Stick». Нажмите «Настроить»: интеграция сама установит и запустит Zigbee2MQTT. После этого добавляйте Zigbee-устройства в Zigbee2MQTT кнопкой «Разрешить подключение».</p>
-<footer><p>Подробности, ограничения и исходный код: <a href="https://github.com/f1devbin/c6-zigbee-stick">github.com/f1devbin/c6-zigbee-stick</a></p></footer>
+<p class="note">Firmware: esp-coordinator 1.5.80 (Espressif ZBOSS stack, NCP over USB), unmodified. The board's flash is fully erased.</p>
+<h2>2. Add the integration through HACS</h2>
+<p>Once per Home Assistant: open the repository in HACS with the button below (or add <code>https://github.com/f1devbin/c6-zigbee-stick</code> as a custom repository of type “Integration”), install “C6 Zigbee Stick” and restart Home Assistant.</p>
+<p><a class="btn" href="https://my.home-assistant.io/redirect/hacs_repository/?owner=f1devbin&repository=c6-zigbee-stick&category=integration" rel="nofollow">Open in HACS</a></p>
+<h2>3. Plug the stick into Home Assistant</h2>
+<p>A “Discovered: C6 Zigbee Stick” card appears in Settings → Devices &amp; services. Press “Add”: the integration installs and starts Zigbee2MQTT (and the Mosquitto broker if there is no MQTT yet), points it at the stick and restarts it when the stick is plugged back in. Then pair Zigbee devices in Zigbee2MQTT with “Permit join”.</p>
+<h2>Supported boards</h2>
+<p>Any ESP32-C6 board whose USB connector is wired to the chip's own USB: ESP32-C6-DevKitC-1, ESP32-C6-DevKitM-1, Seeed Studio XIAO ESP32C6, WeAct ESP32-C6 and similar. On boards with two connectors use the one labelled USB, not UART or COM.</p>
+<h2>FAQ</h2>
+<h3>Can an ESP32-C6 be a Zigbee coordinator?</h3>
+<p>Yes. The ESP32-C6 has an IEEE 802.15.4 radio. With Espressif&#x27;s ZBOSS stack in network co-processor mode it works as a coordinator, and Zigbee2MQTT talks to it with its zboss adapter.</p>
+<h3>Does it work with ZHA?</h3>
+<p>Not yet: Home Assistant&#x27;s built-in ZHA has no ZBOSS support, so the integration uses Zigbee2MQTT.</p>
+<h3>Why does Home Assistant need an integration for it?</h3>
+<p>Retail sticks are recognised by the name in their USB descriptor. Every ESP32-C6 reports the same fixed descriptor (303a:1001, “USB JTAG/serial debug unit”), so the integration asks the board over the ZBOSS protocol whether it really is a coordinator before offering to set it up.</p>
+<h3>What are the limitations?</h3>
+<p>Zigbee2MQTT&#x27;s zboss adapter is marked experimental: changing the channel means re-pairing devices, and network backups, install codes and touchlink are not supported yet.</p>
+<footer><p>Source code, details and issues: <a href="https://github.com/f1devbin/c6-zigbee-stick">github.com/f1devbin/c6-zigbee-stick</a></p></footer>
 </main>
 </body>
 </html>
